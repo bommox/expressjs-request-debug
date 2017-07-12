@@ -28,12 +28,18 @@ const now = () => {
 
 const simplelogger = () => {
   const chain = connect();
+  // at request start log
   chain.use((req, res, next) => {
     if (process.env.NODE_ENV !== 'production') {
       const msg = `> Start request at ${now()}`;
       console.log(`\x1b[33m${msg}\x1b[39m`);
       console.log(`\x1b[90m${req.headers.origin} -> ${req.method} ${req.url}\x1b[39m`);
     }
+    res.on('finish', function() {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('finished', res);
+      }
+    });
     next();
   });
   return chain;

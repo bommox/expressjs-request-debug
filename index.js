@@ -30,7 +30,7 @@ const simplelogger = () => {
   const chain = connect();
   chain.use((req, res, next) => {
     if (process.env.NODE_ENV !== 'production') {
-      const msg = `> Start request at ${utils.now(true)}`;
+      const msg = `> Start request at ${now()}`;
       console.log(`\x1b[33m${msg}\x1b[39m`);
       console.log(`\x1b[90m${req.headers.origin} -> ${req.method} ${req.url}\x1b[39m`);
     }

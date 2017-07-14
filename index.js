@@ -27,19 +27,22 @@ const now = () => {
 };
 
 const logResponseError = (statuscode, starttime) => {
-  const msg = `> ${statuscode} :: Request takes ~${Date.now() - starttime}ms\n`;
-  console.log(`\x1b[1;31m${msg}\x1b[0m`);
+  const msg = `> ${statuscode} ~${Date.now() - starttime}ms`;
+  console.log(`\x1b[1;31m${msg}\n\x1b[0m`);
 };
 
-const logResponseBody = (body, starttime) => {
+const logResponseBody = (body, starttime, cached) => {
   let json = body;
   let more = false;
   more = json.length > 255;
   if (json.length > 255) json = json.substr(0, 255);
   if (more) more = (body.length - 255);
-  console.log(`\x1b[90m${json}${more ? `\n...${body.length} more` : ''}\x1b[0m`);
-  const msg = `> SUCCESS :: Request takes ~${Date.now() - starttime}ms\n`;
-  console.log(`\x1b[1;32m${msg}\x1b[0m`);
+  if (!cached) {
+    console.log(`\x1b[90m${json}${more ? `\n...${body.length} more` : ''}\x1b[0m`);
+  }
+  let msg = `> SUCCESS ~${Date.now() - starttime}ms`;
+  if (cached) msg = `${msg} \x1b[1;31m[CACHED]\x1b[0m`;
+  console.log(`\x1b[1;32m${msg}\n\x1b[0m`);
 };
 
 const onwrite = (res, chunks) => {
@@ -56,8 +59,9 @@ const onend = (res, chunks, starttime) => {
   return function (chunk) {
     if (chunk) chunks.push(new Buffer(chunk));
     const body = Buffer.concat(chunks).toString('utf8');
-    if (res.statusCode !== 200) logResponseError(res.statusCode, starttime);
-    else logResponseBody(body, starttime);
+    if (res.statusCode === 200) logResponseBody(body, starttime, false);
+    else if (res.statusCode === 304) logResponseBody(body, starttime, true);
+    else logResponseError(res.statusCode, starttime);
     old.apply(res, arguments);
   }
 };
@@ -74,9 +78,9 @@ const simplelogger = () => {
     const chunks = [];
     res.write = onwrite(res, chunks);
     res.end = onend(res, chunks, Date.now());
-    const msg = `> Start request at ${now()}`;
-    console.log(`\x1b[33m${msg}\x1b[39m`);
-    console.log(`\x1b[90m${req.headers.origin} -> ${req.method} ${req.url}\x1b[39m`);
+    let msg = `\x1b[36m${now()}\x1b[0m`;
+    msg = `${msg} \x1b[33m${req.headers.origin} -> ${req.method} ${req.url}\x1b[0m`;
+    console.log(msg);
     next();
   });
   return chain;

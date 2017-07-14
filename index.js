@@ -32,7 +32,12 @@ const logResponseError = (statuscode, starttime) => {
 };
 
 const logResponseBody = (body, starttime) => {
-  console.log(`\x1b[90m${body}\x1b[0m`);
+  let json = body;
+  let more = false;
+  more = json.length > 255;
+  if (json.length > 255) json = json.substr(0, 255);
+  if (more) more = (body.length - 255);
+  console.log(`\x1b[90m${json}${more ? `\n...${body.length} more` : ''}\x1b[0m`);
   const msg = `> SUCCESS :: Request takes ~${Date.now() - starttime}ms\n`;
   console.log(`\x1b[1;32m${msg}\x1b[0m`);
 };

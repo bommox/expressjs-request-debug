@@ -59,7 +59,8 @@ const onend = (res, chunks, starttime) => {
   return function (chunk) {
     if (chunk) chunks.push(new Buffer(chunk));
     const body = Buffer.concat(chunks).toString('utf8');
-    if (res.statusCode === 200) logResponseBody(body, starttime, false);
+    if (res.statusCode === 200
+      || res.statusCode === 201) logResponseBody(body, starttime, false);
     else if (res.statusCode === 304) logResponseBody(body, starttime, true);
     else logResponseError(res.statusCode, starttime);
     old.apply(res, arguments);

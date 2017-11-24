@@ -1,0 +1,24 @@
+{
+  "name": "expressjs-simple-logger",
+  "version": "1.0.0",
+  "description": "## Install",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bommox/expressjs-request-debug.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bommox/expressjs-request-debug"
+  },
+  "homepage": "https://github.com/bommox/expressjs-request-debug",
+  "dependencies": {
+    "connect": "^3.6.5",
+    "express": "^4.16.2"
+  }
+}

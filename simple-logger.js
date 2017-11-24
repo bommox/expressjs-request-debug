@@ -1,4 +1,7 @@
+"use strict";
 const connect = require('connect');
+
+
 
 const now = () => {
   let result = '';
@@ -79,8 +82,9 @@ const simplelogger = () => {
     const chunks = [];
     res.write = onwrite(res, chunks);
     res.end = onend(res, chunks, Date.now());
+    let userIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     let msg = `\x1b[36m${now()}\x1b[0m`;
-    msg = `${msg} \x1b[33m${req.headers.origin} -> ${req.method} ${req.url}\x1b[0m`;
+    msg = `${msg} \x1b[33m${req.headers.origin} ${userIp}  -> ${req.method} ${req.url}\x1b[0m`;
     console.log(msg);
     next();
   });
